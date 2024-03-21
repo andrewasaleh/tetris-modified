@@ -16,6 +16,8 @@ class Block:
         self.column_offset = 0 # number of columns to move the block to the right
         self.rotation_state = 0 # current rotation state of the block
         self.colors = Colors.get_cell_colors() # colors for the cells
+        self.texture = None  # Attribute to hold the texture image
+        
 
     def move(self, rows, columns):
         """
@@ -51,13 +53,3 @@ class Block:
         self.rotation_state -= 1
         if self.rotation_state == -1:
             self.rotation_state = len(self.cells) - 1
-
-    def draw(self, screen, offset_x, offset_y):
-        """
-        Draws the block on the screen, taking into account the row and column offsets.
-        """
-        tiles = self.get_cell_positions()
-        for tile in tiles:
-            tile_rect = pygame.Rect(offset_x + tile.column * self.cell_size, 
-                                    offset_y + tile.row * self.cell_size, self.cell_size -1, self.cell_size -1)
-            pygame.draw.rect(screen, self.colors[self.id], tile_rect)

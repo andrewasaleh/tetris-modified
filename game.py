@@ -130,12 +130,14 @@ class Game:
         """
         Rotates the current block if it's possible without overlapping or leaving the grid.
         """
-        self.current_block.rotate()
-        if not self.block_inside() or not self.block_fits():
-            self.current_block.undo_rotation()
-        else:
-            self.sound_manager.play_rotate_sound()
-
+        # Check if the current block is not an O-shaped block (which doesn't rotate)
+        if not isinstance(self.current_block, OBlock):
+            self.current_block.rotate()
+            if not self.block_inside() or not self.block_fits():
+                self.current_block.undo_rotation()
+            else:
+                self.sound_manager.play_rotate_sound()
+                
     def block_inside(self):
         """
         Checks if the current block is inside the grid.
@@ -153,9 +155,9 @@ class Game:
         self.grid.draw(screen)
         self.current_block.draw(screen, 11, 11)
 
-        if self.next_block.id == 3:
+        if isinstance(self.next_block, LBlock):
             self.next_block.draw(screen, 255, 290)
-        elif self.next_block.id == 4:
+        elif isinstance(self.next_block, OBlock):
             self.next_block.draw(screen, 255, 280)
         else:
             self.next_block.draw(screen, 270, 270)

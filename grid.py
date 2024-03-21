@@ -16,6 +16,8 @@ class Grid:
         self.cell_size = 30
         self.grid = [[0 for j in range(self.num_cols)] for i in range(self.num_rows)]
         self.colors = Colors.get_cell_colors()
+        self.textures = {}  # Dictionary to store texture images for each cell value
+
 
     def print_grid(self):
         """
@@ -89,11 +91,19 @@ class Grid:
 
     def draw(self, screen):
         """
-        Draw the current state of the grid on the given screen using the specified colors.
+        Draw the current state of the grid on the given screen using colors or textures.
         """
         for row in range(self.num_rows):
             for column in range(self.num_cols):
                 cell_value = self.grid[row][column]
                 cell_rect = pygame.Rect(column*self.cell_size + 11, row*self.cell_size + 11,
                                         self.cell_size -1, self.cell_size -1)
-                pygame.draw.rect(screen, self.colors[cell_value], cell_rect)
+                if self.textures:
+                    # Check if textures are available
+                    texture = self.textures.get(cell_value)  # Get texture image for the current cell value
+                    if texture:
+                        screen.blit(texture, cell_rect)  # Draw texture image
+                    else:
+                        pygame.draw.rect(screen, self.colors[cell_value], cell_rect)  # Draw colored cell
+                else:
+                    pygame.draw.rect(screen, self.colors[cell_value], cell_rect)  # Draw colored cell
