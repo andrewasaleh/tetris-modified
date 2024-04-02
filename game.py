@@ -13,7 +13,7 @@ class Game:
         self.grid = Grid()
         self.blocks = [IBlock(), JBlock(), LBlock(), OBlock(), SBlock(), TBlock(), ZBlock()]
         self.current_block = self.get_random_block()
-        self.next_block = self.get_random_block()
+        self.next_blocks = [self.get_random_block() for _ in range(3)]
         self.game_over = False
         self.score = 0
         self.sound_manager = SoundManager()  
@@ -97,8 +97,8 @@ class Game:
         tiles = self.current_block.get_cell_positions()
         for position in tiles:
             self.grid.grid[position.row][position.column] = self.current_block.id
-        self.current_block = self.next_block
-        self.next_block = self.get_random_block()
+        self.current_block = self.next_blocks.pop(0)  # Use the first next block
+        self.next_blocks.append(self.get_random_block())  # Add a new block to the queue
         rows_cleared = self.grid.clear_full_rows()
         if rows_cleared > 0:
             self.sound_manager.play_clear_sound()
@@ -149,15 +149,28 @@ class Game:
         return True
 
     def draw(self, screen):
-        """
-        Draws the grid, the current block, and the next block on the screen.
-        """
         self.grid.draw(screen)
         self.current_block.draw(screen, 11, 11)
 
-        if isinstance(self.next_block, LBlock):
-            self.next_block.draw(screen, 255, 290)
-        elif isinstance(self.next_block, OBlock):
-            self.next_block.draw(screen, 255, 280)
-        else:
-            self.next_block.draw(screen, 270, 270)
+        # Adjust starting positions for the preview
+        x_start, y_start = 255, 240
+        for i, block in enumerate(self.next_blocks):
+            # Initial y position for each block, with adjusted spacing
+            y_position = y_start + (i * 90)  
+
+            # Apply specific adjustments for each block type if necessary
+            if isinstance(block, IBlock):
+                # Special case for IBlock, if any special handling is needed
+                adjusted_x = x_start
+                adjusted_y = y_position + 15
+            elif isinstance(block, OBlock):
+                # Slightly adjust the position for OBlock to visually center it
+                adjusted_x = x_start
+                adjusted_y = y_position - 5
+            else:
+                # For other blocks, apply a generic adjustment
+                adjusted_x = x_start + 15
+                adjusted_y = y_position
+
+            # Draw the block at the adjusted position
+            block.draw(screen, adjusted_x, adjusted_y)

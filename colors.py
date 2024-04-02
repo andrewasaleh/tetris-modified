@@ -1,6 +1,6 @@
 class Colors:
     # MAIN GAME COLORS
-    dark_grey = (26, 31, 40) # GRID SQUARES
+    dark_grey = (60, 60, 60) # OUTER DESIGN
     green = (47, 230, 23) # L BLOCK
     red = (232, 18, 18) # J BLOCK
     orange = (226, 116, 17) # I BLOCK
@@ -9,8 +9,9 @@ class Colors:
     cyan = (21, 204, 209) # T BLOCK
     blue = (13, 64, 216) # Z BLOCK
     white = (255, 255, 255) # MAIN GAME FONT
-    dark_blue = (44, 44, 127) # MAIN GAME UI OUTLINE
-    light_blue = (59, 85, 162) # SCORE/NEXT SHAPE BOX
+    black  = (20, 20, 20)  # MAIN GAME ALT FONT
+    dark_blue = (80, 128, 191) # MAIN GAME UI OUTLINE
+    light_blue = (242, 240, 216) # SCORE/NEXT SHAPE BOX
     
     # MAIN MENU BUTTON COLORS
     yellow_green = (197, 202, 31) # INSTRUCTIONS BUTTON
@@ -20,4 +21,4 @@ class Colors:
     
     @classmethod
     def get_cell_colors(cls):
-        return [cls.dark_grey, cls.green, cls.red, cls.orange, cls.yellow, cls.purple, cls.cyan, cls.blue]
+        return [cls.black, cls.green, cls.red, cls.orange, cls.yellow, cls.purple, cls.cyan, cls.blue]
