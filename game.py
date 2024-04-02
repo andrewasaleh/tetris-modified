@@ -3,6 +3,11 @@ from blocks import *
 import random
 import pygame
 from sound import SoundManager
+from os import path
+from colors import Colors
+
+font_general = "fonts/general.ttf"
+screen = pygame.display.set_mode((500, 620))
 
 class Game:
     def __init__(self):
@@ -16,8 +21,17 @@ class Game:
         self.next_blocks = [self.get_random_block() for _ in range(3)]
         self.game_over = False
         self.score = 0
+        self.high_score() 
         self.sound_manager = SoundManager()  
         self.music_playing = False 
+
+    def high_score(self):
+        self.dir = path.dirname(__file__)
+        with open(path.join(self.dir, "highscore.txt"), 'r+') as f:
+            try:
+                self.high_score = int(f.read())
+            except:
+                self.high_score = 0
 
     def start_music(self):
         """
@@ -40,13 +54,32 @@ class Game:
         Update the score based on the number of lines cleared and the number of
         points earned from moving down.
         """
+        point_font = pygame.font.Font(font_general, 20)
+        points100_text = point_font.render("+100", True, Colors.white)
+        points300_text = point_font.render("+300", True, Colors.white)
+        points500_text = point_font.render("+500", True, Colors.white)
+        
         if lines_cleared == 1:
             self.score += 100
+            screen.blit(points100_text, (150, 310))
+            pygame.display.update()
+            pygame.time.delay(250)
         elif lines_cleared == 2:
             self.score += 300
-        elif lines_cleared == 3:
+            screen.blit(points300_text, (150, 310))
+            pygame.display.update()
+            pygame.time.delay(250)
+        elif lines_cleared >= 3:
             self.score += 500
+            screen.blit(points500_text, (150, 310))
+            pygame.display.update()
+            pygame.time.delay(250)
         self.score += move_down_points
+
+        if self.score >= self.high_score:
+            self.high_score = self.score
+            with open(path.join(self.dir, "highscore.txt"), 'w') as f:
+                f.write(str(self.score))
 
     def get_random_block(self):
         """
@@ -114,6 +147,7 @@ class Game:
         self.blocks = [IBlock(), JBlock(), LBlock(), OBlock(), SBlock(), TBlock(), ZBlock()]
         self.current_block = self.get_random_block()
         self.next_block = self.get_random_block()
+        #self.high_score = self.score
         self.score = 0
 
     def block_fits(self):
