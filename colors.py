@@ -11,7 +11,6 @@ class Colors:
     white = (255, 255, 255) # MAIN GAME FONT
     black  = (20, 20, 20)  # MAIN GAME ALT FONT
     dark_blue = (80, 128, 191) # MAIN GAME UI OUTLINE
-    light_blue = (242, 240, 216) # SCORE/NEXT SHAPE BOX
     
     # MAIN MENU BUTTON COLORS
     yellow_green = (197, 202, 31) # INSTRUCTIONS BUTTON

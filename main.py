@@ -11,8 +11,20 @@ pygame.init()
 title_font = pygame.font.Font(None, 40)
 score_surface = title_font.render("Score", True, Colors.white)
 next_surface = title_font.render("Next", True, Colors.white)
-game_over_surface = title_font.render("GAME OVER", True, Colors.red)
-continue_surface = title_font.render("Press any key to play again", True, Colors.white)
+
+font_title = "fonts/title.ttf"
+font_general = "fonts/general.ttf"
+
+# text design
+game_over_font_size = 50
+game_over_font = pygame.font.Font(font_general, game_over_font_size)
+
+continue_font_size = 30
+continue_font = pygame.font.Font(font_general, continue_font_size)
+
+# Render the game over and ask for user input
+game_over_surface = game_over_font.render("GAME OVER", True, Colors.red)
+continue_surface = continue_font.render("Press any key to play again", True, Colors.white)
 
 # Game rectangles for score and next block
 score_rect = pygame.Rect(320, 55, 170, 60)
@@ -43,8 +55,17 @@ class Button:
         self.font_color = font_color
 
     def draw(self, screen):
-        # Draw the button on the screen
-        pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height))
+        # Check if the mouse is hovering over the button to choose the color
+        mouse_pos = pygame.mouse.get_pos()  # Get the mouse position
+        if self.is_hovered(mouse_pos):
+            color = self.hover_color
+        else:
+            color = self.color
+
+        # Draw the button with rounded corners
+        pygame.draw.rect(screen, color, (self.x, self.y, self.width, self.height), border_radius=10)
+
+        # Create and draw the button text
         text_surface = self.font.render(self.text, True, self.font_color)
         text_rect = text_surface.get_rect(center=(self.x + self.width // 2, self.y + self.height // 2))
         screen.blit(text_surface, text_rect)
@@ -58,17 +79,17 @@ start_button = Button("Start", 200, 300, 100, 50, Colors.green, Colors.blue, tit
 
 def main_menu():
     # Fonts for the main menu
-    title_font = pygame.font.Font(None, 50)
-    option_font = pygame.font.Font(None, 40)
+    title_font = pygame.font.Font(font_title, 60)
+    option_font = pygame.font.Font(font_general, 40)
 
     # Button properties for the main menu
     button_width = 200
     button_height = 60
 
-    start_button = Button("Start Game", 150, 200, button_width, button_height, Colors.bright_yellow, Colors.dark_grey, option_font, (0, 0, 0))
-    instructions_button = Button("Instructions", 150, 300, button_width, button_height, Colors.green, Colors.dark_grey, option_font, (0, 0, 0))
-    high_scores_button = Button("High Scores", 150, 400, button_width, button_height, Colors.bright_blue, Colors.dark_grey, option_font, (0, 0, 0))
-    quit_button = Button("Quit", 150, 500, button_width, button_height, Colors.red, Colors.dark_grey, option_font, (0, 0, 0))
+    start_button = Button("Start Game", 150, 170, button_width, button_height, Colors.bright_yellow, Colors.dark_grey, option_font, (0, 0, 0))
+    instructions_button = Button("Instructions", 150, 250, button_width, button_height, Colors.green, Colors.dark_grey, option_font, (0, 0, 0))
+    high_scores_button = Button("High Scores", 150, 330, button_width, button_height, Colors.bright_blue, Colors.dark_grey, option_font, (0, 0, 0))
+    quit_button = Button("Quit", 150, 410, button_width, button_height, Colors.red, Colors.dark_grey, option_font, (0, 0, 0))
 
     # Main menu event loop
     while True:
@@ -86,9 +107,9 @@ def main_menu():
                 elif quit_button.is_hovered(pygame.mouse.get_pos()):
                     return "Quit"
 
-        screen.fill(Colors.dark_blue) # Main Menu
+        screen.fill(Colors.dark_grey) # Main Menu
 
-        title_text = title_font.render("Python Tetris", True, Colors.black)
+        title_text = title_font.render("Python Tetris", True, Colors.white)
         title_rect = title_text.get_rect(center=(250, 100))
         screen.blit(title_text, title_rect)
 
@@ -105,9 +126,9 @@ menu_option = main_menu()
 
 if menu_option == "Start":
     # Countdown 3 2 1 before starting game
-    countdown_font = pygame.font.Font(None, 100)
+    countdown_font = pygame.font.Font(font_general, 100)
     for i in range(3, 0, -1):
-        screen.fill(Colors.dark_blue) # Loading Screen
+        screen.fill(Colors.dark_grey) # Loading Screen
         countdown_text = countdown_font.render(str(i), True, Colors.white)
         countdown_rect = countdown_text.get_rect(center=(250, 300))
         screen.blit(countdown_text, countdown_rect)
@@ -141,6 +162,7 @@ if menu_option == "Start":
                         pygame.mixer.music.pause()  # Pause the music
                     else:
                         pygame.mixer.music.unpause()  # Resume the music
+                    print("Paused:", paused)  # Debug print
 
                 # Game over condition: press any key to restart
                 if game.game_over:
@@ -175,10 +197,10 @@ if menu_option == "Start":
             screen.fill(Colors.dark_blue)
             screen.blit(score_surface, (365, 20))
             screen.blit(next_surface, (375, 180))
-            pygame.draw.rect(screen, Colors.light_blue, score_rect, 0, 10)
+            pygame.draw.rect(screen, Colors.black, score_rect, 0, 10)
             score_value_surface = title_font.render(str(game.score), True, Colors.black)
             screen.blit(score_value_surface, score_value_surface.get_rect(centerx=score_rect.centerx, centery=score_rect.centery))
-            pygame.draw.rect(screen, Colors.light_blue, next_rect, 0, 10)
+            pygame.draw.rect(screen, Colors.black, next_rect, 0, 10)
             game.draw(screen)
         else:
             # Display paused message
@@ -187,17 +209,57 @@ if menu_option == "Start":
             screen.blit(paused_text, paused_rect)
 
         # Drawing
-        score_value_surface = title_font.render(str(game.score), True, Colors.black)
+        score_value_surface = title_font.render(str(game.score), True, Colors.white)
         screen.fill(Colors.dark_grey)
         screen.blit(score_surface, (365, 20, 50, 50))
         screen.blit(next_surface, (375, 180, 50, 50))
 
-        pygame.draw.rect(screen, Colors.light_blue, score_rect, 0, 10)
+        pygame.draw.rect(screen, Colors.black, score_rect, 0, 10)
         screen.blit(score_value_surface, score_value_surface.get_rect(centerx=score_rect.centerx,
                                                                     centery=score_rect.centery))
-        pygame.draw.rect(screen, Colors.light_blue, next_rect, 0, 10)
+        pygame.draw.rect(screen, Colors.black, next_rect, 0, 10)
         game.draw(screen)
         
+        score_font_size = 30  # Size for score font
+        score_font = pygame.font.Font(font_general, score_font_size)
+
+        next_font_size = 30  # Size for next block font
+        next_font = pygame.font.Font(font_general, next_font_size)
+
+        # Render "Score" and "Next" using the custom fonts
+        score_surface = score_font.render("Score", True, Colors.white)
+        next_surface = next_font.render("Next", True, Colors.white)
+
+        if paused:
+            # Screen dimensions for reference
+            screen_width, screen_height = screen.get_size()
+            
+            # Define the semi-transparent box properties
+            box_color = (0, 0, 0, 192)  # Semi-transparent black
+            padding = 20  # Padding around the text for the box
+            
+            # Generate the paused text surface and rect
+            paused_text = title_font.render("Paused - Press Esc to Resume", True, Colors.white)
+            paused_rect = paused_text.get_rect(center=(screen_width / 2, screen_height / 2))
+            
+            # Box dimensions based on the text size plus padding
+            box_width = paused_rect.width + padding * 2
+            box_height = paused_rect.height + padding * 2
+            box_x = paused_rect.x - padding
+            box_y = paused_rect.y - padding
+            
+            # Create a new Surface with per-pixel alpha for semi-transparency
+            box_surface = pygame.Surface((box_width, box_height), pygame.SRCALPHA)
+            box_surface.fill(box_color)  # Fill the surface with the semi-transparent color
+            
+            # Blit the semi-transparent box to the screen at the position
+            screen.blit(box_surface, (box_x, box_y))
+            
+            # Blit the paused text over the box
+            screen.blit(paused_text, paused_rect)
+            
+            pygame.display.update()  # Ensure the screen updates to show the pause message
+
         # Draw the game over screen on top of everything, including the paused message if necessary
         if game.game_over:
             if not game_over_sound_played:
